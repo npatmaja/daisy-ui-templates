@@ -13,6 +13,17 @@
   }
 }
 
+.textarea {
+  @apply rounded-md ring-1 ring-base-content/20 placeholder:text-base-content/55;
+  &:focus,
+  &:focus-within {
+    @apply outline-0 outline-offset-0;
+  }
+  &:focus {
+    @apply ring-2 ring-primary;
+  }
+}
+
 .select {
   @apply rounded-md ring-1 ring-base-content/20;
   &:focus {
