@@ -169,12 +169,11 @@
 
               <div class="flex flex-wrap px-2.5 mt-1 text-center -mx-1">
                 <template x-for="i in shownDateInMonth.firstDayOfMonth">
-                  <div class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5"
-                    style="width: calc(100%/7);"></div>
+                  <div class="text-center text-xs leading-loose p-1.5" style="width: calc(100%/7);"></div>
                 </template>
                 <template x-for="i in shownDateInMonth.numberOfDays">
                   <div x-text="i"
-                    class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5 hover:bg-primary/15"
+                    class="text-center text-xs cursor-pointer rounded-md leading-loose p-1.5 hover:bg-primary/15"
                     @click="selectDate(i)" style="width: calc(100%/7);" :class="{
                         'bg-primary text-primary-content hover:text-primary-content hover:bg-primary/80': isToday(i),
                       }"></div>
