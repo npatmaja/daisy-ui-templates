@@ -76,9 +76,35 @@
 
       <div class="mx-5 mt-5 px-3 py-1 pb-3">
         <!--date pickers-->
-        <div class="flex justify-end mb-4">
+        <div x-data="{
+              datePickerShown: false,
+              selectedDateValue: null,
+              selectedDate: null,
+              selectedMonth: null,
+              selectedYear: null,
+              shownDateInMonth: {
+                numberOfDays: 0,
+                firstDayOfMonth: 0,
+              },
+              init() {
+                const current = new Date();
+                this.selectedYear = current.getFullYear();
+                this.selectedMonth = current.getMonth();
+                this.selectedDate = current.getDate();
+                this.selectedDateValue = formatDate(current);
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              selectDate(labelDate) {
+                const date = new Date(this.selectedYear, this.selectedMonth, labelDate);
+                this.selectedDate = labelDate;
+                this.selectedDateValue = formatDate(date);
+                this.datePickerShown = false;
+              }
+            }" class="flex justify-end mb-4">
           <div class="relative">
-            <input type="text" name="date" placeholder="Select a date" class="input input-sm" />
+            <input type="text" name="date" placeholder="Select a date" class="input input-sm"
+              @click="datePickerShown = !datePickerShown" @keydown.escape="datePickerShown = false"
+              x-model="selectedDateValue" readonly />
             <span class="absolute top-0 right-0 px-2 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                 <path
@@ -89,7 +115,8 @@
               </svg>
             </span>
             <!--the dropdown calendar-->
-            <div class="absolute rounded-md top-8 right-0 w-64 bg-base-100 mt-2 z-40 pb-4">
+            <div x-show="datePickerShown" x-transition @click.outside="datePickerShown = false"
+              class="absolute rounded-md top-8 right-0 w-64 bg-base-100 mt-3 z-40 pb-4">
               <div class="flex justify-between items-center mt-2 mb-2">
                 <button type="button" class="btn btn-xs btn-ghost">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
@@ -98,7 +125,10 @@
                       clip-rule="evenodd" />
                   </svg>
                 </button>
-                <span class="text-lg">January</span>
+                <div class="space-x-1">
+                  <span class="text-lg" x-text="MONTHS[selectedMonth]"></span>
+                  <span class="text-lg" x-text="selectedYear"></span>
+                </div>
                 <button type="button" class="btn btn-xs btn-ghost">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd"
@@ -114,13 +144,16 @@
                 </template>
               </div>
 
-
               <div class="flex flex-wrap px-2.5 mt-1 text-center -mx-1">
-                <template x-for="i in 30">
+                <template x-for="i in shownDateInMonth.firstDayOfMonth">
+                  <div class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5"
+                    style="width: calc(100%/7);"></div>
+                </template>
+                <template x-for="i in shownDateInMonth.numberOfDays">
                   <div x-text="i"
-                    class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5 hover:bg-primary/30"
-                    style="width: calc(100%/7);" :class="{
-                        'bg-primary': i === 4
+                    class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5 hover:bg-primary/15"
+                    @click="selectDate(i)" style="width: calc(100%/7);" :class="{
+                        'bg-primary text-primary-content hover:text-primary-content hover:bg-primary/80': i === selectedDate
                       }"></div>
                 </template>
               </div>
@@ -128,6 +161,38 @@
           </div>
           <script>
             const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const MONTHS = [
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December",
+            ];
+            function formatDate(theDate) {
+              const date = ("0" + theDate.getDate()).slice(-2);
+              const month = ("0" + theDate.getMonth() + 1).slice(-2);
+              const year = theDate.getFullYear();
+              return `${year}-${month}-${date}`;
+            };
+            /**
+            * param `year` `int` the year
+            * param `month` `int` zero based month index, i.e., Jan = 0, Feb = 1, ...
+            **/
+            function getDays(year, month) {
+              const numberOfDays = new Date(year, month + 1, 0).getDate();
+              const firstDayOfMonth = new Date(year, month).getDay();
+              return {
+                firstDayOfMonth,
+                numberOfDays,
+              };
+            }
           </script>
         </div>
         <!--end date picker-->
@@ -635,7 +700,7 @@
 
     <!--toast-->
     <div class="toast toast-end z-50">
-      <div class="alert alert-info rounded-md">
+      <div class="alert rounded-md bg-base-100 shadow-base-300">
         <span>New mail arrived.</span>
       </div>
       <div class="alert alert-success rounded-md">
