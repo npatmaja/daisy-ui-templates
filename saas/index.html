@@ -99,11 +99,34 @@
                 this.selectedDate = labelDate;
                 this.selectedDateValue = formatDate(date);
                 this.datePickerShown = false;
+              },
+              prevMonth() {
+                if (this.selectedMonth === 0) {
+                  this.selectedMonth = 11;
+                  this.selectedYear--;
+                } else {
+                  this.selectedMonth--;
+                }
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              nextMonth() {
+                if (this.selectedMonth === 11) {
+                  this.selectedMonth = 0;
+                  this.selectedYear++;
+                } else {
+                  this.selectedMonth++;
+                }
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              isToday(labelDate) {
+                const current = new Date();
+                const date = new Date(this.selectedYear, this.selectedMonth, labelDate);
+                return current.toDateString() === date.toDateString();
               }
             }" class="flex justify-end mb-4">
           <div class="relative">
             <input type="text" name="date" placeholder="Select a date" class="input input-sm"
-              @click="datePickerShown = !datePickerShown" @keydown.escape="datePickerShown = false"
+              @click="datePickerShown || init(); datePickerShown = true" @keydown.escape="datePickerShown = false"
               x-model="selectedDateValue" readonly />
             <span class="absolute top-0 right-0 px-2 py-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
@@ -117,8 +140,8 @@
             <!--the dropdown calendar-->
             <div x-show="datePickerShown" x-transition @click.outside="datePickerShown = false"
               class="absolute rounded-md top-8 right-0 w-64 bg-base-100 mt-3 z-40 pb-4">
-              <div class="flex justify-between items-center mt-2 mb-2">
-                <button type="button" class="btn btn-xs btn-ghost">
+              <div class="flex justify-between items-center mt-2 mb-2 px-1.5">
+                <button type="button" class="btn btn-sm btn-ghost" @click="prevMonth()">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd"
                       d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
@@ -129,7 +152,7 @@
                   <span class="text-lg" x-text="MONTHS[selectedMonth]"></span>
                   <span class="text-lg" x-text="selectedYear"></span>
                 </div>
-                <button type="button" class="btn btn-xs btn-ghost">
+                <button type="button" class="btn btn-sm btn-ghost" @click="nextMonth()">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd"
                       d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
@@ -153,7 +176,7 @@
                   <div x-text="i"
                     class="text-center text-xs cursor-pointer rounded-full leading-loose p-1.5 hover:bg-primary/15"
                     @click="selectDate(i)" style="width: calc(100%/7);" :class="{
-                        'bg-primary text-primary-content hover:text-primary-content hover:bg-primary/80': i === selectedDate
+                        'bg-primary text-primary-content hover:text-primary-content hover:bg-primary/80': isToday(i),
                       }"></div>
                 </template>
               </div>
