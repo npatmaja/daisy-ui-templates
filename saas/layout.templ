@@ -1,0 +1,818 @@
+package main
+
+templ topBar() {
+<nav>
+  <div class="navbar bg-base-300">
+    <label aria-label="Open menu" for="my-drawer" class="btn btn-square btn-ghost drawer-button md:hidden ">
+      <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+        class="inline-block h-5 w-5 stroke-current md:h-6 md:w-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </label>
+    <div class="flex-1">
+      <a class="btn btn-ghost text-xl">MySaaS</a>
+    </div>
+    <div class="flex-none gap-4 px-3">
+      <div class="form-control hidden md:block">
+        <input type="text" placeholder="Search" class="input input-sm rounded-sm w-24 md:w-auto" />
+      </div>
+      <label class="swap swap-rotate">
+        <!-- this hidden checkbox controls the state -->
+        <input type="checkbox" class="theme-controller" value="light" @click="theme === 'light'? 'dark' : 'light'" />
+        <!-- </svg> -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"
+          :class="{ 'swap-off': theme === 'dark'}">
+          <path
+            d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.758 17.303a.75.75 0 0 0-1.061-1.06l-1.591 1.59a.75.75 0 0 0 1.06 1.061l1.591-1.59ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.697 7.757a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 0 0-1.061 1.06l1.59 1.591Z">
+          </path>
+        </svg>
+        <!-- moon icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="w-6 h-6" :class="{ 'swap-on': theme === 'dark' }">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z">
+          </path>
+        </svg>
+      </label>
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full">
+            <img alt="Tailwind CSS Navbar component"
+              src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+          </div>
+        </div>
+        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-md w-52">
+          <li>
+            <a class="justify-between">
+              Profile
+              <span class="badge badge-info">New</span>
+            </a>
+          </li>
+          <li><a>Settings</a></li>
+          <li><a>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+}
+
+templ datePicker() {
+<div x-data="{
+              datePickerShown: false,
+              selectedDateValue: null,
+              selectedDate: null,
+              selectedMonth: null,
+              selectedYear: null,
+              shownDateInMonth: {
+                numberOfDays: 0,
+                firstDayOfMonth: 0,
+              },
+              init() {
+                const current = new Date();
+                this.selectedYear = current.getFullYear();
+                this.selectedMonth = current.getMonth();
+                this.selectedDate = current.getDate();
+                this.selectedDateValue = formatDate(current);
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              selectDate(labelDate) {
+                const date = new Date(this.selectedYear, this.selectedMonth, labelDate);
+                this.selectedDate = labelDate;
+                this.selectedDateValue = formatDate(date);
+                this.datePickerShown = false;
+              },
+              prevMonth() {
+                if (this.selectedMonth === 0) {
+                  this.selectedMonth = 11;
+                  this.selectedYear--;
+                } else {
+                  this.selectedMonth--;
+                }
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              nextMonth() {
+                if (this.selectedMonth === 11) {
+                  this.selectedMonth = 0;
+                  this.selectedYear++;
+                } else {
+                  this.selectedMonth++;
+                }
+                this.shownDateInMonth = getDays(this.selectedYear, this.selectedMonth);
+              },
+              isToday(labelDate) {
+                const current = new Date();
+                const date = new Date(this.selectedYear, this.selectedMonth, labelDate);
+                return current.toDateString() === date.toDateString();
+              }
+            }" class="flex justify-end mb-4">
+  <div class="relative">
+    <input type="text" name="date" placeholder="Select a date" class="input input-sm"
+      @click="datePickerShown || init(); datePickerShown = true" @keydown.escape="datePickerShown = false"
+      x-model="selectedDateValue" readonly />
+    <span class="absolute top-0 right-0 px-2 py-1">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+        <path
+          d="M5.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H6a.75.75 0 0 1-.75-.75V12ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM7.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H8a.75.75 0 0 1-.75-.75V12ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 10a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V10ZM10 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H10ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H12ZM11.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75V12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 10a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V10ZM14 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H14Z">
+        </path>
+        <path fill-rule="evenodd"
+          d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </span>
+    <!--the dropdown calendar-->
+    <div x-show="datePickerShown" x-transition @click.outside="datePickerShown = false"
+      class="absolute rounded-md top-8 right-0 w-64 bg-base-100 mt-3 z-40 pb-4">
+      <div class="flex justify-between items-center mt-2 mb-2 px-1.5">
+        <button type="button" class="btn btn-sm btn-ghost" @click="prevMonth()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd"
+              d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <div class="space-x-1">
+          <span class="text-lg" x-text="MONTHS[selectedMonth]"></span>
+          <span class="text-lg" x-text="selectedYear"></span>
+        </div>
+        <button type="button" class="btn btn-sm btn-ghost" @click="nextMonth()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+            <path fill-rule="evenodd"
+              d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-wrap justify-between px-2.5 mt-1">
+        <template x-for="(day, index) in DAYS" :key="index">
+          <span x-text="day" class="text-center text-xs" style="width: calc(100%/7);"></span>
+        </template>
+      </div>
+      <div class="flex flex-wrap px-2.5 mt-1 text-center -mx-1">
+        <template x-for="i in shownDateInMonth.firstDayOfMonth">
+          <div class="text-center text-xs leading-loose p-1.5" style="width: calc(100%/7);"></div>
+        </template>
+        <template x-for="i in shownDateInMonth.numberOfDays">
+          <div x-text="i" class="text-center text-xs cursor-pointer rounded-md leading-loose p-1.5 hover:bg-primary/15"
+            @click="selectDate(i)" style="width: calc(100%/7);" :class="{
+                        'bg-primary text-primary-content hover:text-primary-content hover:bg-primary/80': isToday(i),
+                      }"></div>
+        </template>
+      </div>
+    </div>
+  </div>
+  <script>
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const MONTHS = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    function formatDate(theDate) {
+      const date = ("0" + theDate.getDate()).slice(-2);
+      const month = ("0" + theDate.getMonth() + 1).slice(-2);
+      const year = theDate.getFullYear();
+      return `${year}-${month}-${date}`;
+    };
+    /**
+    * param `year` `int` the year
+    * param `month` `int` zero based month index, i.e., Jan = 0, Feb = 1, ...
+    **/
+    function getDays(year, month) {
+      const numberOfDays = new Date(year, month + 1, 0).getDate();
+      const firstDayOfMonth = new Date(year, month).getDay();
+      return {
+        firstDayOfMonth,
+        numberOfDays,
+      };
+    }
+  </script>
+</div>
+}
+
+templ statsCard() {
+<div class="flex flex-wrap justify-center gap-3 mt-8">
+  <div class="stats rounded">
+    <div class="stat">
+      <div class="stat-title">Total Page Views</div>
+      <div class="stat-value">89,400</div>
+      <div class="stat-desc text-green-600">21% more than last month</div>
+    </div>
+  </div>
+  <div class="stats rounded">
+    <div class="stat place-items-center">
+      <div class="stat-title">New Registers</div>
+      <div class="stat-value">1,200</div>
+      <div class="stat-desc text-red-400">↘︎ 90 (14%)</div>
+    </div>
+  </div>
+  <div class="stats rounded">
+    <div class="stat">
+      <div class="stat-figure text-secondary">
+        <div class="avatar online">
+          <div class="w-16 rounded-full">
+            <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+          </div>
+        </div>
+      </div>
+      <div class="stat-value">86%</div>
+      <div class="stat-title">Tasks done</div>
+      <div class="stat-desc text-secondary">31 tasks remaining</div>
+    </div>
+  </div>
+</div>
+}
+
+templ forms() {
+<div class="rounded-md bg-base-200 mt-5 px-3 pb-3">
+  <form>
+    <div>
+      <!--form 1-->
+      <div class="border-b border-base-content/20 pb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="mt-8">
+          <h2 class="text-base font-semibold leading-7">Profile</h2>
+          <p class="mt-1 text-sm leading-6 text-base-content">
+            This information will be displayed publicly so be
+            careful what you share.
+          </p>
+        </div>
+        <div class="mt-8 md:col-span-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-4">
+              <label for="username" class="block text-sm font-medium leading-6 text-base-content">Username</label>
+              <div class="mt-2">
+                <div
+                  class="flex rounded-md shadow-sm ring-1 ring-inset ring-base-content/20 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary sm:max-w-md">
+                  <span
+                    class="flex select-none items-center pl-3 text-base-content/55 sm:text-sm">workcation.com/</span>
+                  <input type="text" name="username" id="username" autocomplete="username"
+                    class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-base-content/50 placeholder:text-base-content/50 focus:ring-0 sm:text-sm sm:leading-6"
+                    placeholder="janesmith" />
+                </div>
+              </div>
+            </div>
+            <div class="col-span-full">
+              <label for="about" class="block text-sm font-medium leading-6 text-base-content">About</label>
+              <div class="mt-2">
+                <textarea id="about" name="about" rows="3"
+                  class="textarea textarea-bordered textarea-sm w-full"></textarea>
+              </div>
+              <p class="mt-3 text-sm leading-6 text-base-content/80">Write a few sentences about yourself.</p>
+            </div>
+            <div class="col-span-full">
+              <label for="photo" class="block text-sm font-medium leading-6 text-base-content">Photo</label>
+              <div class="mt-2 flex items-center gap-x-3">
+                <svg class="h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                    d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <button type="button" class="btn btn-xs rounded border-base-content/20">Change</button>
+              </div>
+            </div>
+            <div class="col-span-full">
+              <label for="cover-photo" class="block text-sm font-medium leading-6 text-base-content">
+                Cover
+                photo
+              </label>
+              <div class="mt-2 flex justify-center rounded-lg border border-dashed border-base-content/25 px-6 py-10">
+                <div class="text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor"
+                    aria-hidden="true">
+                    <path fill-rule="evenodd"
+                      d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <div class="mt-4 flex text-sm leading-6 text-base-content/70">
+                    <input type="file" name="file-upload" class="file-input file-input-xs file-input-ghost" />
+                    <p class="pl-1">or drag and drop</p>
+                  </div>
+                  <p class="text-xs leading-5 text-base-content/70">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end form 1-->
+      <!--form 2-->
+      <div class="border-b border-base-content/20 pb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="mt-8">
+          <h2 class="text-base font-semibold leading-7">Personal Information</h2>
+          <p class="mt-1 text-sm leading-6 text-base-content">
+            Use a permanent address where you can receive
+            mail.
+          </p>
+        </div>
+        <div class="mt-8 md:col-span-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div class="sm:col-span-3">
+              <label for="first-name" class="block text-sm font-medium leading-6 text-base-content">
+                First
+                name
+              </label>
+              <div class="mt-2">
+                <input type="text" name="first-name" id="first-name" autocomplete="given-name"
+                  class="input input-sm w-full" />
+                <br />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label for="last-name" class="block text-sm font-medium leading-6 text-base-content">
+                Last
+                name
+              </label>
+              <div class="mt-2">
+                <input type="text" name="last-name" id="last-name" autocomplete="family-name"
+                  class="input input-sm w-full" />
+              </div>
+            </div>
+            <div class="sm:col-span-4">
+              <label for="email" class="block text-sm font-medium leading-6 text-base-content">
+                Email
+                address
+              </label>
+              <div class="mt-2">
+                <input id="email" name="email" type="email" autocomplete="email" class="input input-sm w-full" />
+              </div>
+            </div>
+            <div class="sm:col-span-3">
+              <label for="country" class="block text-sm font-medium leading-6 text-base-content">Country</label>
+              <div class="mt-2">
+                <select id="country" name="country" autocomplete="country-name" class="select select-sm w-full text-xs">
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>Mexico</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-span-full">
+              <label for="street-address" class="block text-sm font-medium leading-6 text-base-content">
+                Street
+                address
+              </label>
+              <div class="mt-2">
+                <input type="text" name="street-address" id="street-address" autocomplete="street-address"
+                  class="input input-sm w-full" />
+              </div>
+            </div>
+            <div class="sm:col-span-2 sm:col-start-1">
+              <label for="city" class="block text-sm font-medium leading-6 text-base-content">City</label>
+              <div class="mt-2">
+                <input type="text" name="city" id="city" autocomplete="address-level2" class="input input-sm w-full" />
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="region" class="block text-sm font-medium leading-6 text-base-content">
+                State /
+                Province
+              </label>
+              <div class="mt-2">
+                <input type="text" name="region" id="region" autocomplete="address-level1"
+                  class="input input-sm w-full" />
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="postal-code" class="block text-sm font-medium leading-6 text-base-content">
+                ZIP /
+                Postal
+                code
+              </label>
+              <div class="mt-2">
+                <input type="text" name="postal-code" id="postal-code" autocomplete="postal-code"
+                  class="input input-sm w-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end form 2-->
+      <!--form 3-->
+      <div class="border-b border-base-content/20 pb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="mt-8">
+          <h2 class="text-base font-semibold leading-7">Push Notifications</h2>
+          <p class="mt-1 text-sm leading-6 text-base-content">
+            We'll always let you know about important changes,
+            but you pick what else you want to hear about.
+          </p>
+        </div>
+        <div class="mt-8">
+          <div class="space-y-10 md:col-span-2">
+            <fieldset>
+              <legend class="text-sm font-semibold leading-6 text-base-content">By Email</legend>
+              <div class="mt-6 space-y-6">
+                <div class="relative flex gap-x-3">
+                  <div class="flex h-6 items-center">
+                    <input id="comment" type="checkbox" name="comment"
+                      class="checkbox checkbox-xs checkbox-primary rounded border-base-content/20 hover:border-base-content/20" />
+                  </div>
+                  <div class="text-sm leading-6">
+                    <label for="comments" class="font-medium text-base-content">Comments</label>
+                    <p class="text-base-content/65">Get notified when someones posts a comment on a posting.</p>
+                  </div>
+                </div>
+                <div class="relative flex gap-x-3">
+                  <div class="flex h-6 items-center">
+                    <input id="candidates" type="checkbox" name="candidates"
+                      class="checkbox checkbox-xs checkbox-primary rounded border-base-content/20 hover:border-base-content/20" />
+                  </div>
+                  <div class="text-sm leading-6">
+                    <label for="candidates" class="font-medium text-base-content">Candidates</label>
+                    <p class="text-base-content/65">Get notified when a candidate applies for a job.</p>
+                  </div>
+                </div>
+                <div class="relative flex gap-x-3">
+                  <div class="flex h-6 items-center">
+                    <input id="offers" type="checkbox" name="offers"
+                      class="checkbox checkbox-xs checkbox-primary rounded border-base-content/20 hover:border-base-content/20" />
+                  </div>
+                  <div class="text-sm leading-6">
+                    <label for="offers" class="font-medium text-base-content">Offers</label>
+                    <p class="text-base-content/65">
+                      Get notified when a candidate accepts or rejects an offer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend class="text-sm font-semibold leading-6 text-base-content">Push Notifications</legend>
+              <p class="mt-1 text-sm leading-6 text-gray-600">
+                These are delivered via SMS to your mobile phone.
+              </p>
+              <div class="mt-6 space-y-6">
+                <div class="flex items-center gap-x-3">
+                  <input id="push-everything" type="radio" name="push-notifications" checked
+                    class="radio radio-xs radio-primary" />
+                  <label for="push-everything"
+                    class="block text-sm font-medium leading-6 text-base-content">Everything</label>
+                </div>
+                <div class="flex items-center gap-x-3">
+                  <input id="push-email" name="push-notifications" type="radio" class="radio radio-primary radio-xs" />
+                  <label for="push-email" class="block text-sm font-medium leading-6 text-base-content">
+                    Same as
+                    email
+                  </label>
+                </div>
+                <div class="flex items-center gap-x-3">
+                  <input id="push-nothing" name="push-notifications" type="radio"
+                    class="radio radio-primary radio-xs" />
+                  <label for="push-nothing" class="block text-sm font-medium leading-6 text-base-content">
+                    No
+                    push
+                    notifications
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center justify-end gap-x-6">
+        <button type="button" class="btn btn-sm rounded-md">Cancel</button>
+        <button type="submit" class="btn btn-sm btn-primary rounded-md">Save</button>
+      </div>
+    </div>
+  </form>
+</div>
+}
+
+templ tables() {
+<div class="rounded-md bg-base-200 mt-5 px-3 pb-3">
+  <div class="block pt-8">
+    <h2 class="text-base font-semibold leading-7">Zebra table</h2>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra-zebra mt-8">
+        <!-- head -->
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Job</th>
+            <th>Favorite Color</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- row 1 -->
+          <tr>
+            <th>1</th>
+            <td>Cy Ganderton</td>
+            <td>Quality Control Specialist</td>
+            <td>Blue</td>
+          </tr>
+          <!-- row 2 -->
+          <tr>
+            <th>2</th>
+            <td>Hart Hagerty</td>
+            <td>Desktop Support Technician</td>
+            <td>Purple</td>
+          </tr>
+          <!-- row 3 -->
+          <tr>
+            <th>3</th>
+            <td>Brice Swyre</td>
+            <td>Tax Accountant</td>
+            <td>Red</td>
+          </tr>
+          <!-- row 4 -->
+          <tr>
+            <th>3</th>
+            <td>Brice Swyre</td>
+            <td>Tax Accountant</td>
+            <td>Red</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="join flex justify-end">
+      <button class="join-item btn btn-sm">«</button>
+      <button class="join-item btn btn-sm">Page 22</button>
+      <button class="join-item btn btn-sm">»</button>
+    </div>
+  </div>
+  <div class="overflow-x-auto">
+    <h2 class="text-base font-semibold leading-7 mt-8">Multimedia table</h2>
+    <table class="table mt-8">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </th>
+          <th>Name</th>
+          <th>Job</th>
+          <th>Favorite Color</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- row 1 -->
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </th>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img src="https://daisyui.com/tailwind-css-component-profile-2@56w.png"
+                    alt="Avatar Tailwind CSS Component" />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">Hart Hagerty</div>
+                <div class="text-sm opacity-50">United States</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            Zemlak, Daniel and Leannon
+            <br />
+            <span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
+          </td>
+          <td>Purple</td>
+          <th>
+            <button class="btn btn-ghost btn-xs">details</button>
+          </th>
+        </tr>
+        <!-- row 2 -->
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </th>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img src="https://daisyui.com/tailwind-css-component-profile-3@56w.png"
+                    alt="Avatar Tailwind CSS Component" />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">Brice Swyre</div>
+                <div class="text-sm opacity-50">China</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            Carroll Group
+            <br />
+            <span class="badge badge-ghost badge-sm">Tax Accountant</span>
+          </td>
+          <td>Red</td>
+          <th>
+            <button class="btn btn-ghost btn-xs">details</button>
+          </th>
+        </tr>
+        <!-- row 3 -->
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </th>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img src="https://daisyui.com/tailwind-css-component-profile-4@56w.png"
+                    alt="Avatar Tailwind CSS Component" />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">Marjy Ferencz</div>
+                <div class="text-sm opacity-50">Russia</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            Rowe-Schoen
+            <br />
+            <span class="badge badge-ghost badge-sm">Office Assistant I</span>
+          </td>
+          <td>Crimson</td>
+          <th>
+            <button class="btn btn-ghost btn-xs">details</button>
+          </th>
+        </tr>
+        <!-- row 4 -->
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" class="checkbox" />
+            </label>
+          </th>
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="mask mask-squircle w-12 h-12">
+                  <img src="https://daisyui.com/tailwind-css-component-profile-5@56w.png"
+                    alt="Avatar Tailwind CSS Component" />
+                </div>
+              </div>
+              <div>
+                <div class="font-bold">Yancy Tear</div>
+                <div class="text-sm opacity-50">Brazil</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            Wyman-Ledner
+            <br />
+            <span class="badge badge-ghost badge-sm">Community Outreach Specialist</span>
+          </td>
+          <td>Indigo</td>
+          <th>
+            <button class="btn btn-ghost btn-xs">details</button>
+          </th>
+        </tr>
+      </tbody>
+      <!-- foot -->
+      <tfoot>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Job</th>
+          <th>Favorite Color</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="join flex justify-end">
+    <button class="join-item btn btn-sm">«</button>
+    <button class="join-item btn btn-sm">Page 22</button>
+    <button class="join-item btn btn-sm">»</button>
+  </div>
+</div>
+}
+
+templ toasts() {
+<div class="toast toast-end z-50">
+  <div class="alert rounded-md bg-base-100 shadow-base-300">
+    <span>New mail arrived.</span>
+  </div>
+  <div class="alert alert-success rounded-md">
+    <span>Message sent successfully.</span>
+  </div>
+</div>
+}
+
+templ sideBar() {
+<aside class="menu p-4 min-h-full bg-base-200 text-base-content w-60">
+  <ul class="menu menu-xs mt-8">
+    <li>
+      <details open>
+        <summary>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+            <path
+              d="M3.5 2A1.5 1.5 0 0 0 2 3.5v2A1.5 1.5 0 0 0 3.5 7h2A1.5 1.5 0 0 0 7 5.5v-2A1.5 1.5 0 0 0 5.5 2h-2ZM3.5 9A1.5 1.5 0 0 0 2 10.5v2A1.5 1.5 0 0 0 3.5 14h2A1.5 1.5 0 0 0 7 12.5v-2A1.5 1.5 0 0 0 5.5 9h-2ZM9 3.5A1.5 1.5 0 0 1 10.5 2h2A1.5 1.5 0 0 1 14 3.5v2A1.5 1.5 0 0 1 12.5 7h-2A1.5 1.5 0 0 1 9 5.5v-2ZM10.5 9A1.5 1.5 0 0 0 9 10.5v2a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5v-2A1.5 1.5 0 0 0 12.5 9h-2Z">
+            </path>
+          </svg>
+          <span>side item 1</span>
+        </summary>
+        <ul>
+          <li><a href="/">submenu 1</a></li>
+          <li><a href="/">submenu 2</a></li>
+        </ul>
+      </details>
+    </li>
+    <li>
+      <details open>
+        <summary>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+            <path fill-rule="evenodd"
+              d="M7.487 2.89a.75.75 0 1 0-1.474-.28l-.455 2.388H3.61a.75.75 0 0 0 0 1.5h1.663l-.571 2.998H2.75a.75.75 0 0 0 0 1.5h1.666l-.403 2.114a.75.75 0 0 0 1.474.28l.456-2.394h2.973l-.403 2.114a.75.75 0 0 0 1.474.28l.456-2.394h1.947a.75.75 0 0 0 0-1.5h-1.661l.57-2.998h1.95a.75.75 0 0 0 0-1.5h-1.664l.402-2.108a.75.75 0 0 0-1.474-.28l-.455 2.388H7.085l.402-2.108ZM6.8 6.498l-.571 2.998h2.973l.57-2.998H6.8Z"
+              clip-rule="evenodd"></path>
+          </svg>
+          <span>Side Item 2</span>
+        </summary>
+        <ul>
+          <li><a href="/">Sub Item 1</a></li>
+          <li><a href="/">Sub Item 2</a></li>
+        </ul>
+      </details>
+    </li>
+    <li></li>
+    <li>
+      <a href="/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+          <path fill-rule="evenodd"
+            d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0c0-5.385-4.365-9.75-9.75-9.75A.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+            clip-rule="evenodd"></path>
+        </svg>
+        <span>Blog</span>
+        <span class="badge badge-sm badge-primary rounded-md">new</span>
+      </a>
+    </li>
+  </ul>
+</aside>
+}
+
+templ drawer(page templ.Component) {
+<div class="drawer md:drawer-open">
+  <input type="checkbox" id="my-drawer" class="drawer-toggle" />
+  <div class="drawer-content">
+    <!--Top navigation-->
+    @topBar()
+    <div class="mx-5 mt-5 px-3 py-1 pb-3">
+      @page
+    </div>
+    <!-- end of content-->
+  </div>
+  <!--toast-->
+  <!--side navigation-->
+  <div class="drawer-side">
+    <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    @sideBar()
+  </div>
+</div>
+}
+
+templ contentPage() {
+<!--date pickers-->
+@datePicker()
+<!--end date picker-->
+<!--Stats and dashboard-->
+@statsCard()
+<!--form-->
+@forms()
+<!--table-->
+@tables()
+<!--end table-->
+}
+
+templ layoutComponent(page templ.Component) {
+<!DOCTYPE html>
+<html lang="en" x-data="{ theme: 'dark' }" :data-theme="theme">
+
+<head>
+  <title>DaisyUI SaaS Template - Nauval</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="/dist/output.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body class="min-h-screen bg-base-300">
+  @drawer(page)
+  @toasts()
+</body>
+
+</html>
+}
